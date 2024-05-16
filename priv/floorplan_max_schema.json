@@ -1,0 +1,361 @@
+{
+    "version": 3,
+    "rooms": [
+        {
+            "id": "room_1",
+            "name": "Room 1",
+            "corners": [
+                ["wall1", "from"],
+                ["wall1", "to"],
+                ["wall5", "to"],
+                ["wall5", "from"]
+            ],
+            "doors": [
+                {
+                    "door_ref": "wall1door0",
+                    "to_room": "outside"
+                },
+                {
+                    "door_ref": "wall5slidingDoor0",
+                    "to_room": "room_2"
+                }
+            ]
+        },
+        {
+            "id": "room_2",
+            "name": "Room 2",
+            "corners": [
+                ["wall5", "from"],
+                ["wall6", "from"],
+                ["wall6", "to"],
+                ["wall7", "from"]
+            ],
+            "doors": [
+                {
+                    "door_ref": "wall5slidingDoor1",
+                    "to_room": "room_1"
+                },
+                {
+                    "door_ref": "wall6door0",
+                    "to_room": "room_3"
+                },
+                {
+                    "door_ref": "wall7door0",
+                    "to_room": "room_4"
+                },
+                {
+                    "door_ref": "wall7door1",
+                    "to_room": "room_5"
+                }
+
+            ]
+        },
+        {
+            "id": "room_3",
+            "name": "Room 3",
+            "corners": [
+                ["wall6", "from"],
+                ["wall6", "to"],
+                ["wall7", "to"],
+                ["wall5", "to"]
+            ],
+            "doors": [
+                {
+                    "door_ref": "wall6door0",
+                    "to_room": "room_2"
+                }]
+        },
+        {
+            "id": "room_4",
+            "name": "Room 4",
+            "corners": [
+                ["wall7", "from"],
+                ["wall8", "from"],
+                ["wall8", "to"],
+                ["wall0", "to"]
+            ],
+            "doors": [
+                {
+                    "door_ref": "wall7door0",
+                    "to_room": "room_2"
+                }
+            ]
+        },
+        {
+            "id": "room_5",
+            "name": "Room 5",
+            "corners": [
+                ["wall8", "from"],
+                ["wall8", "to"],
+                ["wall2", "to"],
+                ["wall7", "to"]
+            ],
+            "doors": [
+                {
+                    "door_ref": "wall7door1",
+                    "to_room": "room_2"
+                }
+            ]
+        }
+    ],
+    "walls": {
+        "wall0": {
+            "start": {
+                "top": 0,
+                "left": 0
+            },
+            "end": {
+                "top": 15400,
+                "left": 0
+            },
+            "windows": {
+                "wall0window0": {
+                    "start": 1700,
+                    "length": 2000
+                },
+                "wall0window1": {
+                    "start": 7600,
+                    "length": 800
+                },
+                "wall0window2": {
+                    "start": 10000,
+                    "length": 1000
+                },
+                "wall0window3": {
+                    "start": 12000,
+                    "length": 2000
+                }
+            },
+            "doors": {
+                "wall0door0": {
+                    "start": 5460,
+                    "length": 1300,
+                    "clockwise": false
+                }
+            },
+            "users": {
+                "wall0user0": {
+                    "start": 4000,
+                    "height": 300
+                },
+                "wall0user1": {
+                    "relativeTo": "wall0window1",
+                    "relativeToEnd": true,
+                    "start": 200,
+                    "height": 1000
+                }
+            },
+            "adjacentWalls": {
+                "wall1": {
+                    "start": 0
+                },
+                "wall5": {
+                    "start": 9630
+                },
+                "wall7": {
+                    "start": 11400
+                },
+                "wall9": {
+                    "start": 15400
+                }
+            }
+        },
+        "wall1": {
+            "start": {
+                "top": 150,
+                "left": 0
+            },
+            "end": {
+                "top": 150,
+                "left": 10700
+            },
+            "windows": {
+                "wall1window0": {
+                    "start": 3770,
+                    "length": 1730
+                },
+                "wall1window1": {
+                    "start": 6000,
+                    "length": 1720
+                }
+            },
+            "users": {
+                "wall1user0": {
+                    "relativeTo": "wall1window0",
+                    "relativeToEnd": true,
+                    "start": 200,
+                    "height": 1000
+                }
+            },
+            "adjacentWalls": {
+                "wall2": {
+                    "start": 10700
+                }
+            }
+        },
+        "wall2": {
+            "start": {
+                "top": 0,
+                "left": 10700
+            },
+            "end": {
+                "top": 15400,
+                "left": 10700
+            },
+            "adjacentWalls": {
+                "wall5": {
+                    "start": 9630,
+                    "atEnd": true
+                },
+                "wall7": {
+                    "start": 11400,
+                    "atEnd": true
+                },
+                "wall9": {
+                    "start": 15400,
+                    "atEnd": true
+                }
+            }
+        },
+        "wall3": {
+            "start": {
+                "top": 4200,
+                "left": 2000
+            },
+            "end": {
+                "top": 4200,
+                "left": 5500
+            },
+            "users": {
+                "wall3user0": {
+                    "start": 200,
+                    "height": 2200
+                }
+            },
+            "adjacentWalls": {
+                "wall4": {
+                    "start": 1750
+                }
+            }
+        },
+        "wall4": {
+            "start": {
+                "top": 4200,
+                "left": 3750
+            },
+            "end": {
+                "top": 9000,
+                "left": 3750
+            }
+        },
+        "wall5": {
+            "start": {
+                "top": 9000,
+                "left": 0
+            },
+            "end": {
+                "top": 9000,
+                "left": 10700
+            },
+            "doors": {
+                "wall5slidingDoor0": {
+                    "start": 2400,
+                    "length": 1000
+                },
+                "wall5slidingDoor1": {
+                    "start": 5000,
+                    "length": 1000
+                }
+            },
+            "adjacentWalls": {
+                "wall4": {
+                    "start": 3750,
+                    "atEnd": true
+                },
+                "wall6": {
+                    "start": 8000
+                }
+            }
+        },
+        "wall6": {
+            "start": {
+                "top": 9000,
+                "left": 8000
+            },
+            "end": {
+                "top": 11400,
+                "left": 8000
+            },
+            "doors": {
+                "wall6door0": {
+                    "start": 700,
+                    "length": 1070,
+                    "clockwise": false
+                }
+            }
+        },
+        "wall7": {
+            "start": {
+                "top": 11400,
+                "left": 0
+            },
+            "end": {
+                "top": 11400,
+                "left": 10700
+            },
+            "doors": {
+                "wall7door0": {
+                    "start": 2270,
+                    "length": 1070,
+                    "clockwise": true
+                },
+                "wall7door1": {
+                    "start": 6450,
+                    "length": 1070,
+                    "clockwise": true
+                }
+            },
+            "adjacentWalls": {
+                "wall6": {
+                    "start": 8000,
+                    "atEnd": true
+                },
+                "wall8": {
+                    "start": 6180
+                }
+            }
+        },
+        "wall8": {
+            "start": {
+                "top": 11400,
+                "left": 6180
+            },
+            "end": {
+                "top": 15400,
+                "left": 6180
+            }
+        },
+        "wall9": {
+            "start": {
+                "top": 15250,
+                "left": 0
+            },
+            "end": {
+                "top": 15250,
+                "left": 10700
+            },
+            "windows": {
+                "wall9window0": {
+                    "start": 7290,
+                    "length": 1730
+                }
+            },
+            "adjacentWalls": {
+                "wall8": {
+                    "start": 6180,
+                    "atEnd": true
+                }
+            }
+        }
+    }
+}
