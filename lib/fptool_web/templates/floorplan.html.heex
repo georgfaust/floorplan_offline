@@ -8,19 +8,7 @@
   </head>
   <body>
     <div class="p-20 w-[75%]">
-      <svg
-        id="svg-canvas"
-        viewBox={@viewbox}
-        preserveAspectRatio="none"
-        class="w-full"
-        style="transform: scale(1, -1); transform-origin: center;"
-      >
-        <g id="walls">
-          <%= for wall <- @walls do %>
-            <FptoolWeb.Floorplan.wall {wall} />
-          <% end %>
-        </g>
-      </svg>
+      <FptoolWeb.Floorplan.floorplan {assigns} />
     </div>
   </body>
 </html>

@@ -1,35 +1,52 @@
 defmodule Vector do
-  def v(%{x: x, y: y}), do: {x, y}
-  def sub({a1, a2}, {b1, b2}), do: {a1 - b1, a2 - b2}
-  def add({a1, a2}, {b1, b2}), do: {a1 + b1, a2 + b2}
-  def add2(%{x: a1, y: a2}, %{x: b1, y: b2}), do: %{x: a1 + b1, y: a2 + b2}
-  def s_mul({a1, a2}, s), do: {a1 * s, a2 * s}
-  def dot({a1, a2}, {b1, b2}), do: a1 * b1 + a2 * b2
-  def det({a1, a2}, {b1, b2}), do: a1 * b2 - a2 * b1
+  def sub(a, b), do: %{x: a.x - b.x, y: a.y - b.y}
+  def add(a, b), do: %{x: a.x + b.x, y: a.y + b.y}
+  def s_mul(a, s), do: %{x: a.x * s, y: a.y * s}
+  def dot(a, b), do: a.x * b.x + a.y * b.y
+  def det(a, b), do: a.x * b.y - a.y * b.x
   def cross(a, b), do: det(a, b)
-  def len({a1, a2}), do: :math.sqrt(a1 * a1 + a2 * a2)
+  def len(a), do: :math.sqrt(a.x * a.x + a.y * a.y)
   def normalize(a), do: s_mul(a, 1 / len(a))
   def angle(a, b), do: :math.atan2(cross(a, b), dot(a, b)) |> to_deg
-  def from_angle(theta), do: {:math.cos(to_rad(theta)), :math.sin(to_rad(theta))}
+  def from_angle(theta), do: %{x: :math.cos(to_rad(theta)), y: :math.sin(to_rad(theta))}
   def to_rad(deg), do: deg * :math.pi() / 180
   def to_deg(rad), do: rad * 180 / :math.pi()
-  def normal({a1, a2}), do: {-a2, a1}
+  def normal(a), do: %{x: -a.y, y: a.x}
   def invert(a), do: s_mul(a, -1)
-  def slope({x, _}, {x, _}), do: :vertical
-  def slope({x1, y1}, {x2, y2}), do: (y2 - y1) / (x2 - x1)
-  def from_points({p1x, p1y}, {p2x, p2y}), do: {p2x - p1x, p2y - p1y}
-  def as_map({x, y}), do: %{x: x, y: y}
-  def right(), do: {1, 0}
-  def down(), do: {0, 1}
-  def left(), do: {-1, 0}
-  def up(), do: {0, -1}
+  def distance(p1, p2), do: from_points(p1, p2) |> len
+  def from_points(p1, p2), do: %{x: p2.x - p1.x, y: p2.y - p1.y}
+
+  def right(), do: %{x: 1, y: 0}
+  def down(), do: %{x: 0, y: 1}
+  def left(), do: %{x: -1, y: 0}
+  def up(), do: %{x: 0, y: -1}
+  def origin(), do: %{x: 0, y: 0}
+
+  def rotate(a, theta) do
+    theta_ = to_rad(theta)
+    cos_theta = :math.cos(theta_)
+    sin_theta = :math.sin(theta_)
+
+    %{
+      x: cos_theta * a.x - sin_theta * a.y,
+      y: sin_theta * a.x + cos_theta * a.y
+    }
+  end
+
+  def max_by_dimension(vectors, dimension) do
+    vectors |> Enum.map(& &1[dimension]) |> Enum.max()
+  end
+
+  def min_by_dimension(vectors, dimension) do
+    vectors |> Enum.map(& &1[dimension]) |> Enum.min()
+  end
 end
 
 defmodule Lines do
   # https://stackoverflow.com/a/20677983
-  def intersect({{a1x, a1y} = a1, {b1x, b1y} = b1}, {{a2x, a2y} = a2, {b2x, b2y} = b2}) do
-    x_diff = {a1x - b1x, a2x - b2x}
-    y_diff = {a1y - b1y, a2y - b2y}
+  def intersect({a1, b1}, {a2, b2}) do
+    x_diff = %{x: a1.x - b1.x, y: a2.x - b2.x}
+    y_diff = %{x: a1.y - b1.y, y: a2.y - b2.y}
 
     diff_det = Vector.det(x_diff, y_diff)
 
@@ -38,8 +55,8 @@ defmodule Lines do
         :no_intersection
 
       true ->
-        d = {Vector.det(a1, b1), Vector.det(a2, b2)}
-        {Vector.det(d, x_diff) / diff_det, Vector.det(d, y_diff) / diff_det}
+        d = %{x: Vector.det(a1, b1), y: Vector.det(a2, b2)}
+        %{x: Vector.det(d, x_diff) / diff_det, y: Vector.det(d, y_diff) / diff_det}
     end
   end
 end
@@ -47,7 +64,7 @@ end
 defmodule Polygon do
   def centroid(vertices) do
     vertices
-    |> Enum.reduce({0, 0}, fn {vx, vy}, {x, y} -> {x + vx, y + vy} end)
+    |> Enum.reduce(Vector.origin(), fn v, acc_v -> Vector.add(v, acc_v) end)
     |> Vector.s_mul(1 / length(vertices))
   end
 end

@@ -28,8 +28,8 @@ walls =
 
     from = MaxHelper.to_xy(wall.start)
     to = MaxHelper.to_xy(wall.end)
-    direction_v_m = VectorM.from_points(from, to) |> VectorM.normalize()
-    angle = VectorM.right() |> VectorM.angle(direction_v_m)
+    direction = Vector.from_points(from, to) |> Vector.normalize()
+    angle = Vector.right() |> Vector.angle(direction)
     id = Atom.to_string(id)
 
     %{
@@ -40,25 +40,21 @@ walls =
       doors: doors,
       windows: windows,
       angle: angle,
-      direction_v_m: direction_v_m,
-      normal: VectorM.normal(direction_v_m)
+      direction: direction,
+      normal: Vector.normal(direction)
     }
   end
 
 wall_index = Map.new(walls, &{&1.id, &1})
 
-# TODO not needed for svg, these are the room overlays
-_rooms =
+rooms =
   for room <- fp.rooms do
     corners =
       for [wall_ref, point] <- room.corners do
         wall_index[wall_ref][String.to_atom(point)]
       end
 
-    {centroid_x, centroid_y} =
-      corners |> Enum.map(fn %{x: x, y: y} -> {x, y} end) |> Polygon.centroid()
-
-    %{room | corners: corners} |> Map.put(:centroid, %{x: centroid_x, y: centroid_y})
+    Map.put(%{room | corners: corners}, :centroid, Polygon.centroid(corners))
   end
 
 {viewbox_min_x, viewbox_max_x} =
@@ -72,12 +68,10 @@ _rooms =
 viewbox =
   "#{viewbox_min_x - 100} #{viewbox_min_y - 100} #{viewbox_max_x - viewbox_min_x + 200} #{viewbox_max_y - viewbox_min_y + 200}"
 
-%{walls: walls, viewbox: viewbox}
+floorplan = %{walls: walls, viewbox: viewbox, rooms: rooms}
+
+floorplan
 |> Jason.encode!()
 |> then(fn data -> File.write("priv/out/floorplan_max.json", data) end)
 
-# Offline.render(
-#   :floorplan,
-#   %{walls: walls, viewbox: viewbox},
-#   "priv/out/floorplan_max.html"
-# )
+Offline.render(:floorplan, floorplan, "priv/out/floorplan_max.html")

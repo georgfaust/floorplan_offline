@@ -2,12 +2,12 @@ defmodule RevitHelper do
   def load_element(element, wall_index) do
     wall = wall_index[element.host]
     location = Map.take(element.location, [:x, :y])
-    facing_angle = VectorM.angle(element.facing.orientation, VectorM.right())
+    facing_angle = Vector.angle(element.facing.orientation, Vector.right())
 
-    bbox_v = VectorM.from_points(element.bbox.min, element.bbox.max)
-    rotated_to_x_axis_bbox_v = VectorM.rotate(bbox_v, -facing_angle - 90)
+    bbox_v = Vector.from_points(element.bbox.min, element.bbox.max)
+    rotated_to_x_axis_bbox_v = Vector.rotate(bbox_v, -facing_angle - 90)
     width = abs(rotated_to_x_axis_bbox_v.x)
-    offset = VectorM.distance(wall.from, location) - width / 2
+    offset = Vector.distance(wall.from, location) - width / 2
 
     %{
       id: element.id,
@@ -25,8 +25,8 @@ for floor <- fp do
     for wall <- floor.walls do
       from = Map.take(wall.line.start, [:x, :y])
       to = Map.take(wall.line[:end], [:x, :y])
-      direction_v_m = VectorM.from_points(from, to) |> VectorM.normalize()
-      angle = VectorM.right() |> VectorM.angle(direction_v_m)
+      direction = Vector.from_points(from, to) |> Vector.normalize()
+      angle = Vector.right() |> Vector.angle(direction)
 
       %{
         from: from,
@@ -34,8 +34,8 @@ for floor <- fp do
         id: wall.id,
         width: wall.width,
         angle: angle,
-        direction_v_m: direction_v_m,
-        normal: VectorM.normal(direction_v_m)
+        direction: direction,
+        normal: Vector.normal(direction)
       }
     end
 

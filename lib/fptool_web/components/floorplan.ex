@@ -1,16 +1,20 @@
 defmodule FptoolWeb.Floorplan do
   use Phoenix.Component
 
-  alias VectorM, as: V
+  alias Vector, as: V
+
+  attr :selected_room, :string, default: nil
+  attr :viewbox, :string, required: true
+  attr :walls, :list, required: true
+  attr :rooms, :list, default: []
 
   def floorplan(assigns) do
     ~H"""
     <svg
-      class="relative top-0 left-0"
-      width="2000px"
-      height="2000px"
       id="svg-canvas"
-      viewBox="0 0 2000 2000"
+      viewBox={@viewbox}
+      preserveAspectRatio="none"
+      class="relative top-0 left-0 w-full"
     >
       <defs>
         <filter x="0" y="0" width="1" height="1" id="svg-text-background">
@@ -21,9 +25,6 @@ defmodule FptoolWeb.Floorplan do
           </feMerge>
         </filter>
       </defs>
-      <g phx-update="ignore" id="connectors">
-        <!-- used by connectors.js -->
-      </g>
 
       <g id="rooms">
         <%= for room <- @rooms do %>
@@ -34,14 +35,6 @@ defmodule FptoolWeb.Floorplan do
         <%= for wall <- @walls do %>
           <.wall {wall} />
         <% end %>
-      </g>
-
-      <%!-- <circle id="debug-marker-circle-1" cx="100" cy="20" r="5" fill="red" />
-      <circle id="debug-marker-circle-2" cx="200" cy="20" r="5" fill="red" />
-      <circle id="debug-marker-circle-3" cx="300" cy="20" r="5" fill="red" />
-      <circle id="debug-marker-circle-4" cx="400" cy="20" r="5" fill="red" /> --%>
-      <g id="aid-lines">
-        <!-- used by items.js - NOTE: for now this relies on LV updates to remove the aid lines -->
       </g>
     </svg>
     """
@@ -73,7 +66,8 @@ defmodule FptoolWeb.Floorplan do
         phx-click="select-room"
         phx-value-id={@room.id}
         class={[
-          @room.id == @selected_room && "fill-blue-200/25",
+          "hover:fill-blue-200/25",
+          @room.id == @selected_room && "fill-blue-200/50",
           @room.id != @selected_room && "fill-white/0"
         ]}
         stroke="none"
@@ -81,7 +75,7 @@ defmodule FptoolWeb.Floorplan do
       <text
         text-anchor="middle"
         dominant-baseline="middle"
-        font-size="20px"
+        font-size="50mm"
         x={@room.centroid.x}
         y={@room.centroid.y}
         stroke="none"
@@ -89,10 +83,6 @@ defmodule FptoolWeb.Floorplan do
         style="fill-opacity: 1.0"
       >
         <tspan x={@room.centroid.x} dy="0"><%= @room.name %></tspan>
-        <%!--
-          <tspan font-size="14px" x={@room.centroid.x} dy="1.2em">Here could go some</tspan>
-          <tspan font-size="14px" x={@room.centroid.x} dy="1.2em">more info</tspan>
-        --%>
       </text>
     </g>
     """
@@ -153,9 +143,7 @@ defmodule FptoolWeb.Floorplan do
       <path d={"M0,0 l#{@width},0"} stroke-width="4" stroke="black" />
       <!-- frame left -->
       <path d="M0,0 l50,0" stroke-width={@wall.width - 4} stroke="black" />
-      <%!-- <path d="M50,0 l50,0" stroke-width="100" stroke="gray" /> --%>
       <!-- frame right -->
-      <%!-- <path d={"M#{@width-50-50},0 l50,0"} stroke-width="100" stroke="gray" /> --%>
       <path d={"M#{@width-50},0 l50,0"} stroke-width={@wall.width - 4} stroke="black" />
     </g>
     """
@@ -181,7 +169,6 @@ defmodule FptoolWeb.Floorplan do
       |> assign(:transform, transform)
       |> assign(:start_p, start_p)
 
-    # TODO stroke-width: war 0.5, dasharray war 4 erhoeht zur mm version
     ~H"""
     <g
       transform={"translate(#{@start_p.x}, #{@start_p.y})"}
@@ -213,6 +200,6 @@ defmodule FptoolWeb.Floorplan do
 
   # --- helpers
   defp get_start_point(offset, wall) do
-    wall.direction_v_m |> V.s_mul(offset) |> V.add(wall.from)
+    wall.direction |> V.s_mul(offset) |> V.add(wall.from)
   end
 end
